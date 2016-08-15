@@ -7,6 +7,7 @@ package pruebacliente;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.swing.JTextPane;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -27,6 +28,7 @@ public class ventana extends javax.swing.JFrame {
     private String username = "cliente_tres";
     private String password = "tres";
     private String selectedUsuario;
+    private ArrayList<JTextPane> chats = new ArrayList<>();
     private ArrayList<RosterEntry> contactos;
     private XmppManager xmppManager;
     private TableModel tm = new DefaultTableModel();
@@ -51,8 +53,7 @@ public class ventana extends javax.swing.JFrame {
         botonConectar = new javax.swing.JButton();
         botonDesconectar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        chat = new javax.swing.JTextPane();
+        tabbedPane = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
         input = new javax.swing.JTextField();
         botonEnviar = new javax.swing.JButton();
@@ -131,24 +132,20 @@ public class ventana extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        chat.setEditable(false);
-        jScrollPane3.setViewportView(chat);
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jScrollPane3)
-                .addContainerGap())
+                .addComponent(tabbedPane))
         );
 
         botonEnviar.setText("Enviar");
@@ -166,7 +163,7 @@ public class ventana extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(input, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(botonEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(botonEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -258,6 +255,10 @@ public class ventana extends javax.swing.JFrame {
                 tm.setValueAt(contactos.get(i).getName(), i, 0);
                 tm.setValueAt(contactos.get(i).getUser(), i, 1);
                 tm.setValueAt(contactos.get(i).getStatus(), i, 2);
+                JTextPane tp = new JTextPane();
+                tp.setName(contactos.get(i).getUser());
+                chats.add(tp);
+                tabbedPane.add(chats.get(i));
             }
             tablaContactos.setModel(tm);
                 
@@ -272,8 +273,10 @@ public class ventana extends javax.swing.JFrame {
         String msj = input.getText();
         if(!msj.isEmpty()){
             try {
+                JTextPane tp = chats.get(tablaContactos.getSelectedRow());
                 xmppManager.sendMessage(msj, selectedUsuario);
-                chat.setText(chat.getText()+"\n"+"YO: "+msj);
+                //chat.setText(chat.getText()+"\n"+"YO: "+msj);
+                tp.setText(tp.getText()+"\n"+"YO: "+msj);
                 input.setText("");
             } catch (Exception e) {
                 System.out.println("Error en boton enviar mensaje"+e.getMessage());
@@ -289,6 +292,8 @@ public class ventana extends javax.swing.JFrame {
 
     private void tablaContactosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaContactosMouseClicked
         selectedUsuario = (String)tm.getValueAt(tablaContactos.getSelectedRow(),tablaContactos.getSelectedColumn());
+        //tabbedPane.add(chats.get(tablaContactos.getSelectedRow()));
+        tabbedPane.setTitleAt(tabbedPane.getSize().width, selectedUsuario);
         System.out.println("Seleccionado: "+selectedUsuario);
     }//GEN-LAST:event_tablaContactosMouseClicked
 
@@ -331,6 +336,7 @@ public class ventana extends javax.swing.JFrame {
 
         @Override
         public void processMessage(Chat chat2, Message message) {
+            JTextPane tp = chats.get(tablaContactos.getSelectedRow());
             String from = message.getFrom();
             String body = message.getBody();
             if(!body.isEmpty()){
@@ -346,7 +352,6 @@ public class ventana extends javax.swing.JFrame {
     private javax.swing.JButton botonConectar;
     private javax.swing.JButton botonDesconectar;
     private javax.swing.JButton botonEnviar;
-    private javax.swing.JTextPane chat;
     private javax.swing.JTextField input;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -354,7 +359,7 @@ public class ventana extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tablaContactos;
     private javax.swing.JPasswordField tfClave;
     private javax.swing.JTextField tfUsuario;
