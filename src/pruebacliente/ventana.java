@@ -336,11 +336,17 @@ public class ventana extends javax.swing.JFrame {
 
         @Override
         public void processMessage(Chat chat2, Message message) {
-            JTextPane tp = chats.get(tablaContactos.getSelectedRow());
+            JTextPane source=new JTextPane(); 
             String from = message.getFrom();
+            for(JTextPane tp : chats){
+                if(tp.getName().compareToIgnoreCase(from) == 0)
+                    source = tp;
+            }
+            //JTextPane tp = chats.get(tablaContactos.getSelectedRow());
+            
             String body = message.getBody();
             if(!body.isEmpty()){
-                chat.setText(String.format("%1$s\n%2$s: %3$s.",chat.getText(), from, body));
+                source.setText(String.format("%1$s\n%2$s: %3$s.",source.getText(), from, body));
                 System.out.println(String.format("%1$s: %2$s",from, body));
                 //chat.setText(String.format("%1$s\n%2$s: %3$s.",chat.getText(), from, body));
             }
